@@ -1,0 +1,23 @@
+rest_calls:
+  - path: /v3/mail/send
+    method: POST
+    headers:
+      authorization : 'Bearer {{SG_Token}}'
+      content-type: 'application/json'
+      
+    payload:
+      personalizations:
+        - to: [{ "email": "{{email}}", "name":"{{name}}" }]
+          subject: "{{subject}}"
+      from:
+        name: "{{name}}"
+        email: "{{email}}"
+      subject: "{{subject}}"
+      content:
+        - type: "text/html"
+          value: "<html><h1>Test</h1></html>"
+
+    response_format: raw
+    response_expectation:
+        - ['status',"200"]
+        - ['message', "Success"]

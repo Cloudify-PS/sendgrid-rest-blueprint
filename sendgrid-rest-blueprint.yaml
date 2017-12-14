@@ -1,0 +1,34 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+###################################################
+# Requires secrets or should be provided via inputs
+#
+# SG_Token
+# admin_name
+# admin_email
+
+
+inputs:
+  SG_Token:
+    type: string
+    default: {get_secret : SG_Token}
+  name:
+    type: string
+    default: {get_secret: admin_name}
+
+  email:
+    type: string
+    default: {get_secret: admin_email}
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/4.2/types.yaml
+  - https://raw.githubusercontent.com/Cloudify-PS/cloudify-rest-plugin/master/plugin.yaml
+  - components/SendGrid/types.yaml
+
+node_templates:
+  email_notification:
+    type: sendgrid.email.Send
+    properties:
+      SG_Token: { get_input: SG_Token }
+      name: { get_input: name }
+      email: { get_input: email }

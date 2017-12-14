@@ -1,0 +1,38 @@
+node_types:
+  sendgrid.email.Send:
+    derived_from: cloudify.rest.Requests
+    properties:
+      hosts:
+        default: ['api.sendgrid.com']
+      ssl:
+        default: true
+      name:
+        default: ""
+      email:
+        default: ""
+      SG_Token:
+        default: ""
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+           implementation: rest_plugin.rest_plugin.tasks.execute
+           inputs:
+             template_file:
+               default: "components/SendGrid/templates/send.yaml"
+             params:
+               default:
+                 SG_Token:  { get_property: [SELF, SG_Token] }
+                 subject: "Creating Component"
+                 email: { get_property: [SELF, email] }
+                 name:  { get_property: [SELF, name] }
+        delete:
+           implementation: rest_plugin.rest_plugin.tasks.execute
+           inputs:
+             template_file:
+               default: "components/SendGrid/templates/send.yaml"
+             params:
+               default:
+                 SG_Token:  { get_property: [SELF, SG_Token ]}
+                 subject: "Deleting Component"
+                 email: { get_property: [SELF, email] }
+                 name:  { get_property: [SELF, name] }
